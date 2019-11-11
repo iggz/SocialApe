@@ -1,22 +1,14 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const app = require('express')();
+const serviceAccount = require('../keys/admin.json');
 
-admin.initializeApp();
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://socialape-cac58.firebaseio.com"
+});
 
-const firebaseConfig = {
-    apiKey: "AIzaSyClSTlHs_KzGnU8HLY_yw6vUPHjIFNOG7Y",
-    authDomain: "socialape-cac58.firebaseapp.com",
-    databaseURL: "https://socialape-cac58.firebaseio.com",
-    projectId: "socialape-cac58",
-    storageBucket: "socialape-cac58.appspot.com",
-    messagingSenderId: "629677221914",
-    appId: "1:629677221914:web:20bd38f221fde99071c9a3",
-    measurementId: "G-1X92ZDVR3Q"
-};
-
-
-
+const firebaseConfig = require('../keys/firebaseConfig');
 
 const firebase = require('firebase');
 firebase.initializeApp(firebaseConfig);
@@ -75,7 +67,7 @@ app.post('/signup', (req, res) => {
     db.doc(`/users/${newUser.handle}`).get()
         .then(doc => {
             if (doc.exists) {
-                return res.status(400).json({ handle: 'this handle is already taken' });
+                return res.status(400).json({ handle: `the handle "${newUser.handle}" is already taken` });
             } else {
                 return firebase
                     .auth()
