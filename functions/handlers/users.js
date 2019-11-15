@@ -7,6 +7,8 @@ firebase.initializeApp(config)
 
 const { validateSignupData, validateLoginData } = require('../util/validators');
 
+
+// Sign up users
 exports.signup = (req, res) => {
     const newUser = {
         email: req.body.email,
@@ -25,20 +27,16 @@ exports.signup = (req, res) => {
         .get()
         .then(doc => {
             if (doc.exists) {
-                console.log("doc:????", doc)
                 return res.status(400).json({ handle: `the handle "${newUser.handle}" is already taken` });
             } else {
-                console.log("else doc:????", doc)
                 return firebase
                     .auth()
                     .createUserWithEmailAndPassword(newUser.email, newUser.password)
             }
         })
         .then(data => {
-            console.log("then data.user.uid????:", data.user.uid)
+            console.log(":data.user.uid:", data.user.user)
             userId = data.user.uid;
-            console.log("userId:::????", userId)
-            console.log("data.user.getIdToken()????:", data.user.getIdToken())
             return data.user.getIdToken();
         })
         .then((idToken) => {
@@ -106,7 +104,7 @@ exports.uploadImage = (req, res) => {
     let imageFileName;
 
     busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-        console.log(fieldname, file, filename, encoding, mimetype);
+        console.log("fieldname:", fieldname, "file:", file, "filename:", filename, "encoding:", encoding, "mimetype:", mimetype);
         if (mimetype !== 'image/jpeg' && mimetype !== 'image/png') {
             return res.status(400).json({ error: 'Wrong file type submitted' });
         }
