@@ -1,10 +1,7 @@
 const { admin, db } = require('../util/admin');
-
 const config = require('../util/config');
-
 const firebase = require('firebase');
 firebase.initializeApp(config)
-
 const { validateSignupData, validateLoginData, reduceUserDetails } = require('../util/validators');
 
 
@@ -19,10 +16,9 @@ exports.signup = (req, res) => {
 
     const { valid, errors } = validateSignupData(newUser);
     if (!valid) return res.status(400).json({ errors });
-
     const noImg = 'no-img.png'
-
     let token, userId;
+
     db.doc(`/users/${newUser.handle}`)
         .get()
         .then(doc => {
@@ -71,7 +67,6 @@ exports.login = (req, res) => {
     };
 
     const { valid, errors } = validateLoginData(user);
-
     if (Object.keys(errors).length > 0) return res.status(400).json(errors);
     firebase
         .auth()
@@ -104,8 +99,8 @@ exports.addUserDetails = (req, res) => {
             return res.status(500).json({ error: err.code });
         })
 }
-// Get own user details
 
+// Get own user details
 exports.getAuthenticatedUser = (req, res) => {
     let userData = {};
     db.doc(`/users/${req.user.handle}`).get()
@@ -127,6 +122,7 @@ exports.getAuthenticatedUser = (req, res) => {
             return res.status(500).json({ error: err.code });
         })
 }
+
 // Upload a profile image for user
 exports.uploadImage = (req, res) => {
     const BusBoy = require('busboy');

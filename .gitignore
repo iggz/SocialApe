@@ -66,3 +66,6 @@ node_modules/
 
 # keys
 keys/
+
+# config
+util/config

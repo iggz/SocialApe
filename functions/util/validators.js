@@ -33,7 +33,6 @@ exports.validateSignupData = (data) => {
 }
 
 exports.validateLoginData = (data) => {
-    if (!valid) return res.status(400).json({ errors });
 
     let errors = {};
 
