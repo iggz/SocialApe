@@ -1,5 +1,7 @@
 const { db } = require('../util/admin');
 
+
+// Get all screams
 exports.getAllScreams = (req, res) => {
     db
         .collection('screams')
@@ -20,6 +22,7 @@ exports.getAllScreams = (req, res) => {
         .catch(err => console.error(err));
 }
 
+// Post one scream
 exports.postOneScream = (req, res) => {
     const newScream = {
         body: req.body.body,
