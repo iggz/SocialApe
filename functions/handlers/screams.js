@@ -14,7 +14,10 @@ exports.getAllScreams = (req, res) => {
                     screamId: doc.id,
                     body: doc.data().body,
                     userHandle: doc.data().userHandle,
-                    createdAt: doc.data().createdAt
+                    createdAt: doc.data().createdAt,
+                    commentCount: doc.data().commentCount,
+                    likeCount: doc.data().likeCount,
+                    userImage: doc.data().userImage
                 });
             })
             return res.json(screams);
@@ -80,7 +83,7 @@ exports.getScream = (req, res) => {
 // Comment on a comment
 exports.commentOnScream = (req, res) => {
     if (req.body.body.trim() === '')
-        return res.status(400).json({ error: 'Must not be empty' });
+        return res.status(400).json({ comment: 'Must not be empty' });
 
     const newComment = {
         body: req.body.body,
@@ -90,15 +93,19 @@ exports.commentOnScream = (req, res) => {
         userImage: req.user.imageUrl
     }
 
-    db.doc(`/screams/${req.params.screamId}`).get()
+    db.doc(`/screams/${req.params.screamId}`)
+        .orderBy('createdAt', 'desc')
+        .get()
         .then(doc => {
             if (!doc.exists) {
-                return res.status(400).json({ error: 'Scream not found' });
+                return res.status(404).json({ error: 'Scream not found' });
             }
             return doc.ref.update({ commentCount: doc.data().commentCount + 1 })
         })
         .then(() => {
-            return db.collection('comments').add(newComment);
+            return db.collection('comments')
+                .orderBy('createdAt', 'desc')
+                .add(newComment);
         })
         .then(() => {
             res.json(newComment);
@@ -109,7 +116,7 @@ exports.commentOnScream = (req, res) => {
         });
 };
 
-//Like a scream
+// Like a scream
 exports.likeScream = (req, res) => {
     const likeDocument = db.collection('likes').where('userHandle', '==', req.user.handle)
         .where('screamId', '==', req.params.screamId).limit(1);
@@ -151,7 +158,7 @@ exports.likeScream = (req, res) => {
         })
 };
 
-
+// Unlike a scream
 exports.unlikeScream = (req, res) => {
     const likeDocument = db.collection('likes').where('userHandle', '==', req.user.handle)
         .where('screamId', '==', req.params.screamId).limit(1);
@@ -192,7 +199,7 @@ exports.unlikeScream = (req, res) => {
 };
 
 
-//Delete Scream
+// Delete Scream
 exports.deleteScream = (req, res) => {
     const document = db.doc(`/screams/${req.params.screamId}`);
     document.get()

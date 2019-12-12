@@ -23,8 +23,18 @@ let db = {
     comments: [
         {
             userHandle: 'user',
-            screamId: 'asdfadfsaasdf',
+            screamId: 'joxrXS1OTlW6CiZ1H1HV',
             body: 'Nice one mate',
+            createdAt: '2019-11-09T02:59:07.278Z'
+        }
+    ],
+    notification: [
+        {
+            recipient: 'user',
+            sender: 'john',
+            read: 'true | false',
+            screamId: 'jxoralskdrjlasfkn',
+            type: 'like | comment',
             createdAt: '2019-11-09T02:59:07.278Z'
         }
     ]
